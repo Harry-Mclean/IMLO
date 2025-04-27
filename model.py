@@ -16,9 +16,13 @@ class IMLONetwork(nn.Module):
         self.layer6 = nn.ReLU()
         self.layer7 = nn.MaxPool2d(2, 2)  # Pooling after the new convolutional layer
         self.layer8 = nn.BatchNorm2d(64)
-        self.layer9 = nn.Dropout(0.5)
+        self.layer9 = nn.Conv2d(64, 128, kernel_size=3, padding=1)  # Third convolution
+        self.layer10 = nn.ReLU()  # Apply ReLU activation
+        self.layer11 = nn.MaxPool2d(2, 2)  # Pooling after third convolution
+        self.layer12 = nn.BatchNorm2d(128)  # Batch Normalization
+        self.layer13 = nn.Dropout(0.5)
 
-        self.final_layer = nn.Linear(64 * 8 * 8, 10)
+        self.final_layer = nn.Linear(128 * 4 * 4, 10)
 
     def forward(self, x):
         x = self.layer1(x)
@@ -30,6 +34,10 @@ class IMLONetwork(nn.Module):
         x = self.layer7(x)
         x = self.layer8(x)
         x = self.layer9(x)
+        x = self.layer10(x)
+        x = self.layer11(x)
+        x = self.layer12(x)
+        x = self.layer13(x)
         x = x.view(x.size(0), -1)  # flatten data
         x = self.final_layer(x)
         return x
