@@ -3,12 +3,11 @@ import torchvision.transforms as transforms
 import torchvision
 import torch.nn as nn
 from test import test_model
-
+import time
 from model import IMLONetwork
+
 #Variables to configure
-epoch_count = 2
-
-
+epoch_count = 25
 
 if __name__ == '__main__':
     # Initialises Model
@@ -25,6 +24,8 @@ if __name__ == '__main__':
 
     loss_function = nn.CrossEntropyLoss()  # Loss function uses cross entropy loss
     optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    start_time = time.time()
 
     for epoch in range(epoch_count):
         training_loss = 0
@@ -49,5 +50,12 @@ if __name__ == '__main__':
                 training_loss = 0.0
 
     torch.save(model.state_dict(), 'IMLO_Coursework.pth')
+    time_taken = time.time() - start_time
+    hours = time_taken // 3600
+    minutes = (time_taken % 3600) // 60
+    seconds = time_taken % 60
+
+    print(f"Training complete in {hours:.0f}h {minutes:.0f}m {seconds:.0f}s")
+
     print('Finished Training')
     print(f'Testing Accuracy: {test_model(model)}%')
