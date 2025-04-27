@@ -10,8 +10,11 @@ from model import IMLONetwork
 epoch_count = 25
 
 if __name__ == '__main__':
+    device = torch.device('cpu') # sets device as CPU
+
+
     # Initialises Model
-    model = IMLONetwork()
+    model = IMLONetwork().to(device)
 
     # sets transforms for images
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -33,6 +36,8 @@ if __name__ == '__main__':
         total_predictions = 0
         for i, data in enumerate(trainloader, 0):
             inputs, labels = data
+            inputs, labels = inputs.to(device), labels.to(device)
+            # make sure inputs and labels are on cpu
             optimiser.zero_grad()
             outputs = model(inputs)
             loss = loss_function(outputs, labels)
