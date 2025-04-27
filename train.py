@@ -7,7 +7,7 @@ import time
 from model import IMLONetwork
 
 #Variables to configure
-epoch_count = 25
+epoch_count = 50
 
 if __name__ == '__main__':
     device = torch.device('cpu') # sets device as CPU
