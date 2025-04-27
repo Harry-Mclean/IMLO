@@ -2,8 +2,8 @@ import torch
 import torchvision
 from torchvision import transforms
 
-
 from model import IMLONetwork
+
 
 def test_model(model):
     model.eval()  # evaluation mode
@@ -27,4 +27,4 @@ def test_model(model):
 if __name__ == '__main__':
     model = IMLONetwork()
     model.load_state_dict(torch.load("IMLO_Coursework.pth"))
-    print(test_model(model))
+    print(f'Testing Accuracy: {test_model(model)}%')
