@@ -13,8 +13,7 @@ epoch_count = 50
 training_validation_split = 0.8
 
 if __name__ == '__main__':
-    device = torch.device('cpu') # sets device as CPU
-
+    device = torch.device('cpu')  # sets device as CPU
 
     # Initialises Model
     model = IMLONetwork().to(device)
@@ -83,7 +82,7 @@ if __name__ == '__main__':
                 total_predictions += labels.size(0)
 
         validation_accuracy = 100 * correct_predictions / total_predictions
-        print(f"[Epoch {epoch+1}] Training Loss: {training_loss / len(trainloader):.3f}, "
+        print(f"[Epoch {epoch + 1}] Training Loss: {training_loss / len(trainloader):.3f}, "
               f"Training Accuracy: {training_accuracy:.2f}%, "
               f"Validation Accuracy: {validation_accuracy:.2f}%")
 
