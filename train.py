@@ -4,11 +4,12 @@ import torchvision
 import torch.nn as nn
 from torch.utils.data import random_split
 
-from test import test_model
+from test import test_model, training_test
 import time
 from model import IMLONetwork
 
-#Variables to configure
+# Variables to configure
+
 epoch_count = 50
 training_validation_split = 0.8
 
@@ -26,6 +27,7 @@ if __name__ == '__main__':
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
+
     # Downloads dataset
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 
@@ -95,4 +97,5 @@ if __name__ == '__main__':
     print(f"Training complete in {hours:.0f}h {minutes:.0f}m {seconds:.0f}s")
 
     print('Finished Training')
+    print(f"Training Accuracy: {training_test(model)}%")
     print(f'Testing Accuracy: {test_model(model)}%')
