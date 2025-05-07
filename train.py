@@ -4,7 +4,7 @@ import torchvision
 import torch.nn as nn
 from torch.utils.data import random_split
 
-from test import test_model, training_test
+from test import test_model
 import time
 from model import IMLONetwork
 
@@ -97,5 +97,4 @@ if __name__ == '__main__':
     print(f"Training complete in {hours:.0f}h {minutes:.0f}m {seconds:.0f}s")
 
     print('Finished Training')
-    print(f"Training Accuracy: {training_test(model)}%")
     print(f'Testing Accuracy: {test_model(model)}%')
