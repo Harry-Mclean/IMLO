@@ -2,7 +2,7 @@ import torch
 import torchvision.transforms as transforms
 import torchvision
 import torch.nn as nn
-from torch.utils.data import random_split
+from torch.utils.data import random_split, Subset
 
 from test import test_model
 import time
@@ -18,26 +18,42 @@ if __name__ == '__main__':
 
     # Initialises Model
     model = IMLONetwork().to(device)
+    full_trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True)
 
-    # sets transforms for images
-    transform = transforms.Compose([
-        transforms.RandomHorizontalFlip(p=0.5),
+    # 2️⃣ Split indices into train/val
+    train_size = int(0.8 * len(full_trainset))  # 40,000
+    val_size = len(full_trainset) - train_size  # 10,000
+
+    generator = torch.Generator().manual_seed(42)  # for reproducibility
+    train_subset, val_subset = random_split(full_trainset, [train_size, val_size], generator=generator)
+
+    # 3️⃣ Define transforms
+    train_transform = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.02),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    # Downloads dataset
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+    val_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
 
-    # splits dataset into training set and validation set
-    train_size = int(training_validation_split * len(trainset))
-    val_size = len(trainset) - train_size
-    train_data, val_data = random_split(trainset, [train_size, val_size])
+    # 4️⃣ Create *new* dataset objects, wrapping the subsets and applying transforms
+    train_data = Subset(
+        torchvision.datasets.CIFAR10(root='./data', train=True, transform=train_transform),
+        train_subset.indices
+    )
 
-    # Loads dataset
-    trainloader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+    val_data = Subset(
+        torchvision.datasets.CIFAR10(root='./data', train=True, transform=val_transform),
+        val_subset.indices
+    )
+
+    # 5️⃣ Create DataLoaders
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=32, shuffle=False)
 
     loss_function = nn.CrossEntropyLoss()  # Loss function uses cross entropy loss
@@ -50,7 +66,7 @@ if __name__ == '__main__':
         training_loss = 0
         correct_predictions = 0
         total_predictions = 0
-        for i, data in enumerate(trainloader, 0):
+        for i, data in enumerate(train_loader, 0):
             inputs, labels = data
             inputs, labels = inputs.to(device), labels.to(device)
             # make sure inputs and labels are on cpu
@@ -84,7 +100,7 @@ if __name__ == '__main__':
                 total_predictions += labels.size(0)
 
         validation_accuracy = 100 * correct_predictions / total_predictions
-        print(f"[Epoch {epoch + 1}] Training Loss: {training_loss / len(trainloader):.3f}, "
+        print(f"[Epoch {epoch + 1}] Training Loss: {training_loss / len(train_loader):.3f}, "
               f"Training Accuracy: {training_accuracy:.2f}%, "
               f"Validation Accuracy: {validation_accuracy:.2f}%")
 
