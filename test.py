@@ -10,7 +10,6 @@ def test_model(model):
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32)
-
     correct_predictions = 0
     total_predictions = 0
     with torch.no_grad():

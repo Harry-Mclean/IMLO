@@ -57,7 +57,7 @@ if __name__ == '__main__':
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=32, shuffle=False)
 
     loss_function = nn.CrossEntropyLoss()  # Loss function uses cross entropy loss
-    optimiser = torch.optim.Adam(model.parameters(), lr=0.002)
+    optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
 
     start_time = time.time()
 
